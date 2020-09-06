@@ -1,11 +1,12 @@
-package gosms
+package cmd
 
 import (
 	"errors"
 	"fmt"
-	ini "github.com/vaughan0/go-ini"
 	"strconv"
 	"strings"
+
+	ini "github.com/vaughan0/go-ini"
 )
 
 /* ===== Application Configuration ===== */

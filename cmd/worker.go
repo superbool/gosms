@@ -1,10 +1,11 @@
-package gosms
+package cmd
 
 import (
-	"github.com/haxpax/gosms/modem"
 	"log"
 	"strings"
 	"time"
+
+	"gosms/modem"
 )
 
 //TODO: should be configurable

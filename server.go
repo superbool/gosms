@@ -1,17 +1,19 @@
 package main
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"github.com/haxpax/gosms"
-	"github.com/gorilla/mux"
-	"github.com/satori/go.uuid"
 	"html/template"
 	"log"
 	"net/http"
 	"path/filepath"
 	"strings"
-	"encoding/base64"
+
+	"gosms/cmd"
+
+	"github.com/gorilla/mux"
+	uuid "github.com/satori/go.uuid"
 )
 
 //reposne structure to /sms
@@ -26,7 +28,7 @@ type SMSDataResponse struct {
 	Message  string         `json:"message"`
 	Summary  []int          `json:"summary"`
 	DayCount map[string]int `json:"daycount"`
-	Messages []gosms.SMS    `json:"messages"`
+	Messages []cmd.SMS      `json:"messages"`
 }
 
 // Cache templates
@@ -68,9 +70,9 @@ func sendSMSHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	mobile := r.FormValue("mobile")
 	message := r.FormValue("message")
-	uuid, _ := uuid.NewV1()
-	sms := &gosms.SMS{UUID: uuid.String(), Mobile: mobile, Body: message, Retries: 0}
-	gosms.EnqueueMessage(sms, true)
+	uuid := uuid.NewV1()
+	sms := &cmd.SMS{UUID: uuid.String(), Mobile: mobile, Body: message, Retries: 0}
+	cmd.EnqueueMessage(sms, true)
 
 	smsresp := SMSResponse{Status: 200, Message: "ok"}
 	var toWrite []byte
@@ -85,9 +87,9 @@ func sendSMSHandler(w http.ResponseWriter, r *http.Request) {
 // dumps JSON data, used by log view. Methods allowed: GET
 func getLogsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("--- getLogsHandler")
-	messages, _ := gosms.GetMessages("")
-	summary, _ := gosms.GetStatusSummary()
-	dayCount, _ := gosms.GetLast7DaysMessageCount()
+	messages, _ := cmd.GetMessages("")
+	summary, _ := cmd.GetStatusSummary()
+	dayCount, _ := cmd.GetLast7DaysMessageCount()
 	logs := SMSDataResponse{
 		Status:   200,
 		Message:  "ok",
